@@ -1,0 +1,45 @@
+This job is executed on accepted MR from release/hotfix branch to master to:
+
+- **promote RC image in docker registry**
+- **create git tag on master**
+- **deploy application to prod environment**
+
+Supported buildFlavors: `['maven','gradle-wrapper','yarn]`
+
+Webhook config:
+
+Triggers:
+
+- Accepted MR
+  * target branch must be `master`
+  * source branch must be either `release` or `hotfix` branch
+
+Pipeline SCM:
+
+- Branch Specifier: origin/${gitlabTargetBranch}
+
+Usage:
+
+```groovy
+//Following params are required
+def params = [:]
+genericProdDeploy(params)
+```
+
+Available build flavors:
+
+- gradle-wrapper - use when project has ./gradlew
+- maven - use when building with agent built-in mvn
+- yarn - use when building with agent built-in yarn
+
+Optional params with default values:
+
+```groovy
+def optionalParams = [
+        dockerAgentLabel: 'docker-18.09',           // jenkins agent label used to build docker images (default in folder parameter)
+        dockerImageName: 'my-image',                // docker image name (defaults to repository name)
+        deployAgentLabel: 'kubectl-1.12.6',         // jenkins agent label used to deploy on kubernetes (default in folder parameter)
+        deployLockResource: 'my-locable-resource'   // lockable resource name to lock when deployment is in progress
+                                                    // you can use this parameter to prevent simultaneous deployments of a number of microservices
+]
+```

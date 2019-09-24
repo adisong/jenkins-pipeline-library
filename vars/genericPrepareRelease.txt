@@ -1,0 +1,30 @@
+This job prepares release branch from develop:
+
+- **creates new release branch from develop**
+- **updates version on release branch**
+- **publishes initial RC tag on release branch**
+- **bumps version on develop branch to prepare for new development cycle and publishes changes**
+
+Supported buildFlavors: `['maven','gradle-wrapper','yarn]`
+
+Webhook config:
+
+Triggers:
+    - Triggered manually
+
+Usage:
+
+```groovy
+//Following params are required
+def params = [
+        agentLabel: 'jdk8u191',
+        buildFlavor: 'gradle-wrapper'
+]
+genericPrepareRelease(params)
+```
+
+Available build flavors:
+
+- gradle-wrapper - use when project has ./gradlew
+- maven - use when building with agent built-in mvn
+- yarn - use when building with agent built-in yarn

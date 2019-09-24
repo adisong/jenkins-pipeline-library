@@ -1,0 +1,50 @@
+This job is executed when Gitlab MR are opened/updated to verify that code:
+
+- **can be merged without conflicts**
+- **compiles**
+- **passes quality gates**
+- **passes security evaluation with NexusIQ**
+
+Supported buildFlavors: `['maven','gradle-wrapper','yarn]`
+
+Webhook config:
+
+Triggers:
+    - Opened Merge Request Events
+    - Comments
+
+Pipeline SCM:
+    - Branch Specifier: origin/${gitlabSourceBranch} - to make sure pipeline definition is loaded from feature branch
+
+Usage:
+
+```groovy
+//Following params are required
+def params = [
+        agentLabel: 'jdk8u191',
+        buildFlavor: 'gradle-wrapper'
+]
+genericMRVerify(params)
+```
+
+Available build flavors:
+
+- gradle-wrapper - use when project has ./gradlew
+- maven - use when building with agent built-in mvn
+- yarn - use when building with agent built-in yarn
+
+Optional params with default values:
+
+```groovy
+def optionalParams = [
+        gitCredentialsId: 'gitlab-repo-access',
+        gitlabConnection: 'gitlab-connection',
+        sonarEnvId: 'sonarqube',
+        sonarLanguage: 'java',
+        sonarQualityProfile: 'IXF Java',
+        nexusIQAppName: "myapplication",
+        nexusIQScanPatterns: [
+            "**/build/libs/*.jar"
+        ]
+]
+```

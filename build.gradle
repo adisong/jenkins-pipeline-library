@@ -1,0 +1,92 @@
+apply plugin: 'groovy'
+apply plugin: 'idea'
+
+apply from: "$rootDir/gradle/jenkins-test-harness.gradle"
+apply from: "$rootDir/gradle/jenkins-rest-runner.gradle"
+apply from: "$rootDir/gradle/jenkins-library-mock.gradle"
+
+group 'com.adisong.jenkins'
+version '1.0-SNAPSHOT'
+
+ext {
+    jobDslVersion = '1.72'
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'http://repo.spring.io/plugins-release/'}
+    maven { url 'http://repo.jenkins-ci.org/releases/' }
+    jcenter()
+}
+
+sourceSets {
+    jobs {
+        groovy {
+            srcDirs = ['jobs']
+            compileClasspath += main.compileClasspath
+        }
+    }
+
+    main {
+        groovy {
+            srcDirs = ['src','vars']
+        }
+    }
+
+    test {
+        groovy {
+            srcDirs = ['test']
+        }
+    }
+}
+
+
+configurations {
+    ivy
+}
+
+dependencies {
+    ivy "org.apache.ivy:ivy:2.4.0"
+    compile 'org.codehaus.groovy:groovy-all:2.5.5'
+    compile "org.jenkins-ci.plugins:job-dsl-core:${jobDslVersion}"
+    compile project (':modules:jenkins-global-library')
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'com.lesfurets', name: 'jenkins-pipeline-unit', version: '1.1'
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
+
+    // Job DSL plugin including plugin dependencies
+    testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}"
+    testCompile "org.jenkins-ci.plugins:job-dsl:${jobDslVersion}@jar"
+
+    compile('org.codehaus.groovy.modules.http-builder:http-builder:0.7.2') {
+        exclude(module: 'groovy')
+    }
+    compile('org.apache.ant:ant:1.9.7')
+
+    // TRICKY: The lib folder contains all other plugins *JAR* files
+    // if not found in Maven
+    compile fileTree(dir: 'lib', include: ['*.jar'])
+}
+
+test {
+    dependsOn tasks.resolveTestPlugins
+    dependsOn tasks.copyPipelineLibTask
+    dependsOn tasks.copyGlobalLibTask
+    inputs.files sourceSets.jobs.groovy.srcDirs
+
+    // set build directory for Jenkins test harness, JENKINS-26331
+    systemProperty 'buildDirectory', project.buildDir.absolutePath
+}
+
+tasks.withType(GroovyCompile) {
+    groovyClasspath += configurations.ivy
+}
+

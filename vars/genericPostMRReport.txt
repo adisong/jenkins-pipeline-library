@@ -1,0 +1,44 @@
+This job is executed on accepted merge request events to:
+
+- **publish sonarqube report**
+- **remove temporary sonarqube project for short lived branch**
+- **publish new release candidate tag on merge to release and hotfix branch**
+
+Supported buildFlavors: `['maven','gradle-wrapper','yarn']`
+
+Webhook config:
+
+Triggers:
+    - Accepted Merge Request Events
+
+Pipeline SCM:
+    - Branch Specifier: origin/${gitlabTargetBranch} - because source branch may not exist anymore when MR is accepted
+
+Usage:
+
+```groovy
+//Following params are required
+def params = [
+        agentLabel: 'jdk8u191',
+        buildFlavor: 'gradle-wrapper',
+]
+genericPostMRReport(params)
+```
+
+Available build flavors:
+
+- gradle-wrapper - use when project has ./gradlew
+- maven - use when building with agent built-in mvn
+- yarn - use when building with agent built-in yarn
+
+Optional params with default values:
+
+```groovy
+def optionalParams = [
+        gitCredentialsId: 'gitlab-repo-access',
+        gitlabConnection: 'gitlab-connection',
+        sonarEnvId: 'sonarqube',
+        sonarLanguage: 'java',
+        sonarQualityProfile: 'IXF Java'
+]
+```

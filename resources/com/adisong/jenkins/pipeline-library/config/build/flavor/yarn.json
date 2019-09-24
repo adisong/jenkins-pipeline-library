@@ -1,0 +1,38 @@
+{
+  "buildTool": "yarn",
+  "debugFlags": "--verbose",
+  "stacktraceFlags": "",
+  "language": "js",
+  "defaultQualityProfile": "Sonar way",
+  "steps": {
+    "syntaxCheck": {
+      "target": "ci:syntaxCheck"
+    },
+    "build": {
+      "target": "ci:build"
+    },
+    "test": {
+      "target": "ci:test"
+    },
+    "analyze": {
+      "target": "ci:analyze",
+      "prerequisites": [
+        "ci:prerequisites",
+        "ci:test"
+      ]
+    },
+    "securityScan": {
+      "prerequisites": [
+        "ci:nexusIQ"
+      ],
+      "scanPatterns": [
+        "**/nexus-iq-build/**/*.js"
+      ]
+    },
+    "release": {
+      "target": "version",
+      "additionalFlags": "--no-git-tag-version",
+      "versionFlag": "--new-version"
+    }
+  }
+}

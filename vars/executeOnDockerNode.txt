@@ -1,0 +1,11 @@
+Use to execute commands on docker slave node specified with **`agentLabel`**. This job is used mostly to test docker slaves.
+
+Usage:
+
+```groovy
+def params = [
+    agentLabel: 'mvn-3.6.0-jdk8',
+    commands: ['mvn --version','mvn info','mvn clean package']
+]
+executeOnDockerNode(params)
+```

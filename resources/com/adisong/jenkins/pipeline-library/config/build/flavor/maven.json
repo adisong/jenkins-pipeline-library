@@ -1,0 +1,33 @@
+{
+  "buildTool": "mvn",
+  "debugFlags": "-e",
+  "stacktraceFlags": "-X",
+  "language": "java",
+  "defaultQualityProfile": "Sonar way",
+  "steps": {
+    "syntaxCheck": {
+      "target": "compile"
+    },
+    "build": {
+      "target": "clean package -DskipTests"
+    },
+    "test": {
+      "target": "test"
+    },
+    "analyze": {
+      "target": "sonar:sonar"
+    },
+    "securityScan": {
+      "prerequisites": [
+        "clean package -DskipTests"
+      ],
+      "scanPatterns": [
+        "**/*.jar"
+      ]
+    },
+    "release": {
+      "target": "versions:set",
+      "versionFlag": "-DnewVersion"
+    }
+  }
+}

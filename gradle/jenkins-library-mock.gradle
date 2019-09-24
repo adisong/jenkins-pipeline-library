@@ -1,0 +1,16 @@
+// Copy pipeline lib so loading library can be mocked using local resolver
+task copyPipelineLibTask(type: Copy,) {
+    from '.'
+    into 'build/libs/pipeline-library@master'
+    include 'src/**'
+    include 'vars/**'
+    include 'resources/**'
+}
+
+// Copy global lib so loading library can be mocked using local resolver
+task copyGlobalLibTask(type: Copy,) {
+    from 'modules/jenkins-global-library'
+    into 'build/libs/global-library@master'
+    include 'src/**'
+    include 'vars/**'
+}

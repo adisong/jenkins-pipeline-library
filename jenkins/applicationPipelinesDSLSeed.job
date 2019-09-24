@@ -1,0 +1,27 @@
+#!/bin/env groovy
+
+import com.adisong.jenkins.helpers.GitHelper
+
+pipeline {
+    agent any
+    stages {
+        stage('checkout') {
+            steps {
+                script {
+                    def gitHelper = new GitHelper(this, "${params.pipelineLibraryRepoHttpUrl}", "${params.gitCredentialsId}")
+                    gitHelper.CheckoutWithSubmodules("${params.pipelineLibraryVersion}")
+                }
+            }
+        }
+        stage('prepare folder') {
+            steps {
+                jobDsl targets: 'jobs/common/createFolderWithLibrary.groovy', additionalParameters: params
+            }
+        }
+        stage('populate folder with pipelines') {
+            steps {
+                jobDsl targets: 'jobs/application/*.groovy', additionalParameters: params
+            }
+        }
+    }
+}

@@ -1,0 +1,19 @@
+Default **`withSonarQubeEnv`** override that adds **SONAR_GITLAB_PARAMS** env variable which can be used with [sonar-gitlab-plugin](https://github.com/gabrie-allaigre/sonar-gitlab-plugin).
+**SONAR_GITLAB_PARAMS** stores following options:
+
+```
+-Dsonar.analysis.mode=preview
+-Dsonar.gitlab.commit_sha
+-Dsonar.gitlab.ref_name
+-Dsonar.gitlab.project_id
+```
+
+Usage:
+
+Like default **`withSonarQubeEnv`** step
+
+```
+withSonarQubeEnv('my sonarqube config name'){
+  // your code here but now you can use "${SONAR_GITLAB_PARAMS}"
+}
+```

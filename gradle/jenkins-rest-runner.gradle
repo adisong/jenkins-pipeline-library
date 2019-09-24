@@ -1,0 +1,14 @@
+configurations {
+    restRunner
+}
+
+dependencies {
+    // Dependency for rest runner to log properly
+    restRunner('ch.qos.logback:logback-classic:1.3.0-alpha4')
+}
+
+task rest(dependsOn: 'classes', type: JavaExec) {
+    main = 'com.adisong.jenkins.pipeline_library.dsl.rest.RestApiScriptRunner'
+    classpath = configurations.restRunner +sourceSets.main.runtimeClasspath
+    systemProperties System.getProperties()
+}

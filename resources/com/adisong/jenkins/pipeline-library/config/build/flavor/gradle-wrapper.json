@@ -1,0 +1,33 @@
+{
+  "buildTool": "./gradlew",
+  "debugFlags": "--info",
+  "stacktraceFlags": "--stacktrace",
+  "language": "java",
+  "defaultQualityProfile": "Sonar way",
+  "buildProperties": [{
+    "name": "com/adisong/jenkins/pipeline-library/config/build/flavor/gradle-wrapper.properties",
+    "target": "gradle.properties"
+  }],
+  "steps": {
+    "syntaxCheck": {
+      "target": "compileJava compileGroovy checkstyleTest checkstyleMain"
+    },
+    "build": {
+      "target": "build"
+    },
+    "test": {
+      "target": "test"
+    },
+    "analyze": {
+      "target": "sonarqube"
+    },
+    "securityScan": {
+      "prerequisites": [
+        "assemble"
+      ],
+      "scanPatterns": [
+        "**/build/libs/*.jar"
+      ]
+    }
+  }
+}
